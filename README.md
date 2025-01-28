@@ -1,49 +1,103 @@
 # Image Thumbnail Generator with NConvert
 
-This PowerShell script processes images in a specified folder to generate multiple thumbnail versions using the [NConvert](https://www.xnview.com/en/nconvert/) utility. It is designed to dynamically create thumbnails with different resolutions while maintaining the aspect ratio of the original image. Supported image formats include `gif`, `png`, `jpg`, `webp`, `wep`, and `bmp`.
+This PowerShell script processes images in a specified folder to generate multiple thumbnail versions using the [NConvert](https://www.xnview.com/en/nconvert/) utility. It dynamically creates thumbnails with different resolutions while maintaining the aspect ratio of the original image, with support for multiple output formats including PNG, JPG, WebP, BMP, and GIF.
 
 ## Features
-- Generates multiple thumbnails of different sizes (2000px, 1500px, 1000px, 750px, 500px, and 250px on the longest side).
-- Skips images that already have thumbnails of specified dimensions.
-- Maintains image quality and metadata (e.g., ICC profiles and EXIF data).
-- Processes images recursively from a specified folder.
-- Robust error handling for missing files or failed thumbnail generation.
+- Generates multiple thumbnails of different sizes (2000px, 1500px, 1000px, 750px, 500px, and 250px on the longest side)
+- Supports multiple output formats (PNG, JPG, JPEG, WebP, BMP, GIF)
+- Creates organized subdirectories for each thumbnail size
+- Maintains image quality with format-specific optimizations
+- Processes images recursively from a specified folder
+- Provides clear, concise progress feedback
+- Includes detailed error reporting when issues occur
 
 ## Requirements
-- [NConvert](https://www.xnview.com/en/nconvert/) must be installed and located in a subfolder called `NConvert` relative to the script's location.
-- PowerShell (Windows PowerShell or PowerShell Core).
+- [NConvert](https://www.xnview.com/en/nconvert/) must be installed and located in a subfolder called `NConvert` relative to the script's location
+- PowerShell (Windows PowerShell or PowerShell Core)
 
 ## Usage
 
-### Parameters:
-- **`$SourcePath`**: Mandatory. The full path to the folder containing the images that need to be processed.
+### Parameters
+- **`$SourcePath`**: (Mandatory) The full path to the folder containing the images to be processed
+- **`$OutputFormat`**: (Mandatory) The desired output format for the thumbnails. Valid options are:
+  - png (High compression, 300 DPI)
+  - jpg/jpeg (95% quality)
+  - webp (Maximum quality)
+  - bmp
+  - gif
 
-### Example Usage:
+### Example Usage
 
 ```powershell
-.\nConvert-automation.ps1 -SourcePath "C:\path\to\image\folder"
+# Generate PNG thumbnails
+.\nConvert-automation.ps1 -SourcePath "C:\path\to\images" -OutputFormat "png"
+
+# Generate WebP thumbnails
+.\nConvert-automation.ps1 -SourcePath "C:\path\to\images" -OutputFormat "webp"
+
+# Generate JPG thumbnails
+.\nConvert-automation.ps1 -SourcePath "C:\path\to\images" -OutputFormat "jpg"
 ```
 
-This command will process all supported images inside the specified folder, creating thumbnails for each image that doesn't already have thumbnails in the `2000px`, `1500px`, `1000px`, `750px`, `500px`, or `250px` sizes.
+## Output Structure
 
-## How It Works
+The script creates subdirectories for each thumbnail size under the source directory. For example:
+```
+source_directory/
+├── 2000px/
+│   ├── image1-2000px.jpg
+│   └── image2-2000px.jpg
+├── 1500px/
+│   ├── image1-1500px.jpg
+│   └── image2-1500px.jpg
+└── [other size directories...]
+```
 
-1. **Check for NConvert**: The script first verifies if the `nconvert.exe` executable is located in a folder named `NConvert` in the same directory as the script. If not found, it displays an error and exits.
+## Format-Specific Settings
 
-2. **Specify Dimensions**: The script defines an array of thumbnail sizes, which are used to create multiple resized versions of each image.
-
-3. **File Exclusion**: Images that already have thumbnails with the defined dimensions in their filenames are skipped.
-
-4. **Process Images**: 
-   - For each image, the script retrieves the original image's width and height using NConvert.
-   - It determines the longest side (width or height) and only creates thumbnails where the longest side is larger than the target thumbnail size.
-   - For each thumbnail size, it calls `nconvert.exe` to resize the image proportionally, creating a new thumbnail in the same folder with the size appended to the filename (e.g., `image-500px.jpg`).
-
-5. **Logging and Error Handling**: 
-   - If an image fails to process or NConvert cannot retrieve image dimensions, an error is logged, but the script continues processing the rest of the images.
-   - If no images are found or no thumbnails are created, it logs a message and exits gracefully.
+The script applies optimal settings for each output format:
+- **PNG**: Uses maximum compression (level 9) and 300 DPI
+- **JPG/JPEG**: Uses 95% quality setting
+- **WebP**: Uses maximum quality setting
+- **BMP/GIF**: Uses default conversion settings
 
 ## Error Handling
-- If `nconvert.exe` is not found, the script exits with an error message.
-- If there are issues reading image files or creating thumbnails, detailed error messages are shown.
-- The script continues processing even if some images encounter errors.
+
+The script includes comprehensive error handling:
+- Validates NConvert installation
+- Checks for valid source directory and images
+- Reports individual failures without stopping the entire process
+- Provides detailed error information when issues occur
+- Shows command-line details for debugging purposes
+
+## Console Output
+
+The script provides clear feedback during processing:
+```
+Starting image conversion to jpg...
+Processing: image1.png - DONE - Created 4 Thumbnails
+Processing: image2.jpg - DONE - Created 3 Thumbnails
+Processing: image3.png - Skipped (No thumbnails needed)
+Conversion completed.
+```
+
+If an error occurs, detailed information is displayed:
+```
+Processing: image4.png - FAILED
+Detailed error information:
+  - Failed at 1000px: [error details]
+Command details:
+  NConvert path: [path]
+  Original dimensions: [dimensions]
+  Last command: [command]
+```
+
+## Notes
+- The script skips creating thumbnails for images smaller than the target dimensions
+- Existing thumbnails are overwritten if they already exist
+- The script removes metadata and EXIF thumbnails during conversion
+- All resizing is done using the Lanczos algorithm for optimal quality
+- A 4-second pause is added at the end of processing to review the final output
+
+## Contributing
+Feel free to submit issues and enhancement requests through the GitHub repository's issue tracker.
