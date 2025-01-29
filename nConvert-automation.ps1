@@ -166,12 +166,12 @@ foreach ($ImagePath in $ImageFilePaths) {
                         }
                         'webp' {
                             $Arguments += @(
-                                "-q", "85" # WebP quality (default: 85) - balance of quality/size
+                                "-q", "95" # WebP quality (default: 85) - balance of quality/size
                             )
                         }
                         'jpeg' {
                             $Arguments += @(
-                                "-q", "90", # JPEG quality (default: 85) - higher quality setting
+                                "-q", "95", # JPEG quality (default: 85) - higher quality setting
                                 "-dct", "2", # DCT method (0:Slow, 1:Fast, 2:Float) - using float for better quality
                                 "-opthuff", # Optimize Huffman Table (JPEG) - better compression
                                 "-subsampling", "1" # Subsampling factor (0:2x2,1x1,1x1, 1:2x1,1x1,1x1, 2:1x1,1x1,1x1)
@@ -246,8 +246,8 @@ foreach ($ImagePath in $ImageFilePaths) {
 $stopwatch.Stop()
 
 # Display the elapsed time and total thumbnails created
-Write-Host "`nConversion completed." -ForegroundColor Cyan
 Write-LabeledValue "Total processing time: " $stopwatch.Elapsed.ToString('hh\:mm\:ss\.fff')
 Write-LabeledValue "Total thumbnails created: " $totalThumbnails
+Write-Host "`nConversion completed." -ForegroundColor Cyan
 
 Start-Sleep 4

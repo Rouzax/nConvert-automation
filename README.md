@@ -18,13 +18,13 @@ This PowerShell script processes images in a specified folder to generate multip
 ## Usage
 
 ### Parameters
-- **`$SourcePath`**: (Mandatory) The full path to the folder containing the images to be processed
-- **`$OutputFormat`**: (Mandatory) The desired output format for the thumbnails. Valid options are:
-  - png (High compression, 300 DPI)
-  - jpg/jpeg (95% quality)
-  - webp (Maximum quality)
-  - bmp
-  - gif
+- **`-SourcePath`** (Mandatory): Full path to the folder containing images for processing.
+- **`-OutputFormat`** (Mandatory): Desired output format for thumbnails. Options:
+  - `png` (High compression, 300 DPI)
+  - `jpg` / `jpeg` (95% quality, optimized Huffman tables)
+  - `webp` (Maximum quality)
+  - `bmp`
+  - `gif` (256 colors)
 
 ### Example Usage
 
@@ -53,12 +53,13 @@ source_directory/
 └── [other size directories...]
 ```
 
-## Format-Specific Settings
+## Format-Specific Optimizations
 
 The script applies optimal settings for each output format:
-- **PNG**: Uses maximum compression (level 9) and 300 DPI
-- **JPG/JPEG**: Uses 95% quality setting
-- **WebP**: Uses maximum quality setting
+- **PNG**: Maximum compression (`clevel 9`), 300 DPI.
+- **JPG/JPEG**: 95% quality, optimized Huffman tables, float DCT for better quality.
+- **WebP**: Maximum quality (`q 95`).
+- **GIF**: Limited to 256 colors for compatibility.
 - **BMP/GIF**: Uses default conversion settings
 
 ## Error Handling
@@ -70,26 +71,32 @@ The script includes comprehensive error handling:
 - Provides detailed error information when issues occur
 - Shows command-line details for debugging purposes
 
-## Console Output
+### Example Output
 
-The script provides clear feedback during processing:
 ```
-Starting image conversion to jpg...
+Searching for image files...
+Found 3 image files to process
+
 Processing: image1.png - DONE - Created 4 Thumbnails
 Processing: image2.jpg - DONE - Created 3 Thumbnails
-Processing: image3.png - Skipped (No thumbnails needed)
+Processing: image3.png - SKIPPED (No thumbnails needed)
+
+Total processing time: 00:01:23.456
+Total thumbnails created: 7
+
 Conversion completed.
 ```
 
-If an error occurs, detailed information is displayed:
+### Error Example
+
 ```
 Processing: image4.png - FAILED
-Detailed error information:
-  - Failed at 1000px: [error details]
-Command details:
-  NConvert path: [path]
-  Original dimensions: [dimensions]
-  Last command: [command]
+Errors for image4.png:
+For 1000px:
+    Error: NConvert failed (Exit code: 1). Error: Invalid input format
+    Command: C:\path\to\NConvert\nconvert.exe -resize longest 1000 -out webp -o output.webp image4.png
+
+Original dimensions: 3200x2400
 ```
 
 ## Notes
@@ -97,7 +104,6 @@ Command details:
 - Existing thumbnails are overwritten if they already exist
 - The script removes metadata and EXIF thumbnails during conversion
 - All resizing is done using the Lanczos algorithm for optimal quality
-- A 4-second pause is added at the end of processing to review the final output
 
 ## Contributing
 Feel free to submit issues and enhancement requests through the GitHub repository's issue tracker.
