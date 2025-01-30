@@ -41,16 +41,43 @@ This PowerShell script processes images in a specified folder to generate multip
 
 ## Output Structure
 
-The script creates subdirectories for each thumbnail size under the source directory. For example:
+The script creates subdirectories for the Output format and for each thumbnail size under the source directory. For example:
 ```
-source_directory/
-├── 2000px/
-│   ├── image1-2000px.jpg
-│   └── image2-2000px.jpg
-├── 1500px/
-│   ├── image1-1500px.jpg
-│   └── image2-1500px.jpg
-└── [other size directories...]
+C:\Image_Test
+│   Image1.png
+│   Image2.png
+│   Image3.jpg
+│
+└───PNG
+    ├───1000px
+    │       Image1-1000px.png
+    │       Image2-1000px.png
+    │       Image3-1000px.png
+    │
+    ├───1500px
+    │       Image1-1500px.png
+    │       Image2-1500px.png
+    │       Image3-1500px.png
+    │
+    ├───2000px
+    │       Image1-2000px.png
+    │       Image2-2000px.png
+    │       Image3-2000px.png
+    │
+    ├───250px
+    │       Image1-250px.png
+    │       Image2-250px.png
+    │       Image3-250px.png
+    │
+    ├───500px
+    │       Image1-500px.png
+    │       Image2-500px.png
+    │       Image3-500px.png
+    │
+    └───750px
+            Image1-750px.png
+            Image2-750px.png
+            Image3-750px.png
 ```
 
 ## Format-Specific Optimizations
@@ -74,6 +101,10 @@ The script includes comprehensive error handling:
 ### Example Output
 
 ```
+Using NConvert from: C:\GitHub\nConvert-automation\NConvert\nconvert.exe
+Source Path: C:\Image_Test
+Output Format: png
+
 Searching for image files...
 Found 3 image files to process
 
@@ -81,7 +112,7 @@ Processing: image1.png - DONE - Created 4 Thumbnails
 Processing: image2.jpg - DONE - Created 3 Thumbnails
 Processing: image3.png - SKIPPED (No thumbnails needed)
 
-Total processing time: 00:01:23.456
+Total processing time: 00:00:24.585
 Total thumbnails created: 7
 
 Conversion completed.

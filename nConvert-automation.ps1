@@ -129,10 +129,20 @@ foreach ($ImagePath in $ImageFilePaths) {
 
         $ImageRootFolder = Split-Path -Path $ImagePath -Parent
 
+        # Create format-specific directory name (in uppercase)
+        $formatDir = $OutputFormat.ToUpper()
+        # Convert 'JPG' to 'JPEG' for NConvert command but keep original extension for output file
+        if ($formatDir -eq 'JPEG') {
+            $formatDir = 'JPG'
+        }
+
         foreach ($Dimension in $Dimensions) {
             if ($longestSide -gt $Dimension) {
                 try {
-                    $OutputDirectory = Join-Path $ImageRootFolder "$Dimension`px"
+                    # Create nested directory structure: format/dimension
+                    $OutputDirectory = Join-Path $ImageRootFolder $formatDir
+                    $OutputDirectory = Join-Path $OutputDirectory "$Dimension`px"
+                    
                     if (-not (Test-Path $OutputDirectory)) {
                         New-Item -ItemType Directory -Path $OutputDirectory -Force | Out-Null
                     }
