@@ -20,7 +20,7 @@ This PowerShell script processes images in a specified folder to generate multip
 ### Parameters
 - **`-SourcePath`** (Mandatory): Full path to the folder containing images for processing.
 - **`-OutputFormat`** (Mandatory): Desired output format for thumbnails. Options:
-  - `png` (High compression)
+  - `png` (High compression, 150 DPI)
   - `jpg` / `jpeg` (95% quality, optimized Huffman tables)
   - `webp` (Maximum quality)
   - `bmp`
@@ -83,7 +83,7 @@ C:\Image_Test
 ## Format-Specific Optimizations
 
 The script applies optimal settings for each output format:
-- **PNG**: Maximum compression (`clevel 9`).
+- **PNG**: Maximum compression (`clevel 9`), 150 DPI.
 - **JPG/JPEG**: 95% quality, optimized Huffman tables, float DCT for better quality.
 - **WebP**: Maximum quality (`q 95`).
 - **GIF**: Limited to 256 colors for compatibility.

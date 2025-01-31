@@ -170,7 +170,8 @@ foreach ($ImagePath in $ImageFilePaths) {
                     switch ($nconvertFormat) {
                         'png' {
                             $Arguments += @(
-                                "-clevel", "9" # PNG Compression level (max compression, range 0-9)
+                                "-clevel", "9", # PNG Compression level (max compression, range 0-9)
+                                "-dpi", "150" # Set the resolution in DPI
                             )
                         }
                         'webp' {
