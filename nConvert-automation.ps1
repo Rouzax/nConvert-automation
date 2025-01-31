@@ -182,6 +182,8 @@ foreach ($ImagePath in $ImageFilePaths) {
                         'jpeg' {
                             $Arguments += @(
                                 "-q", "95", # JPEG quality (default: 85) - higher quality setting
+                                "-merge_alpha", # Merge alpha by using 'transparent color'
+                                "-transpcolor", "255", "255", "255", # red green blue: Transparency color (GIF/PNG)
                                 "-dct", "2", # DCT method (0:Slow, 1:Fast, 2:Float) - using float for better quality
                                 "-opthuff", # Optimize Huffman Table (JPEG) - better compression
                                 "-subsampling", "1" # Subsampling factor (0:2x2,1x1,1x1, 1:2x1,1x1,1x1, 2:1x1,1x1,1x1)
