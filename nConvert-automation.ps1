@@ -1,3 +1,27 @@
+<#
+.SYNOPSIS
+    Automates the creation of image thumbnails using NConvert.
+
+.DESCRIPTION
+    This script scans for image files in a given source directory (excluding files that already
+    include dimension suffixes) and generates thumbnails at various predefined dimensions. The
+    thumbnails are created using the NConvert command line tool and saved in a format-specific
+    subdirectory in the desired output format.
+
+.PARAMETER SourcePath
+    The directory path where the original image files are located.
+
+.PARAMETER OutputFormat
+    The desired output image format for the thumbnails.
+    Valid values are: png, jpg, jpeg, webp, bmp, gif.
+
+.EXAMPLE
+    .\nConvert-automation.ps1 -SourcePath "C:\Images" -OutputFormat "jpg"
+
+.NOTES
+    Ensure that nconvert.exe is located in the NConvert subdirectory relative to the script's location.
+#>
+
 param(
     [Parameter(
         Mandatory = $true
@@ -11,7 +35,28 @@ param(
     [string] $OutputFormat
 )
 
+#-------------------------------------------
 function Write-StatusMessage {
+    <#
+    .SYNOPSIS
+        Writes a formatted status message to the console.
+
+    .DESCRIPTION
+        This function displays a status message prefixed with a dash. It shows the main status
+        message in a specified foreground color and can optionally display additional information.
+
+    .PARAMETER Status
+        The main status message text.
+
+    .PARAMETER Color
+        The foreground color for the status message.
+
+    .PARAMETER AdditionalInfo
+        Optional additional information to display after the status message.
+
+    .EXAMPLE
+        Write-StatusMessage "DONE" "Green" "Created 3 Thumbnails"
+    #>
     param(
         [string]$Status,
         [string]$Color,
@@ -26,7 +71,34 @@ function Write-StatusMessage {
     }
 }
 
+#-------------------------------------------
 function Write-LabeledValue {
+    <#
+    .SYNOPSIS
+        Writes a label and its corresponding value to the console.
+
+    .DESCRIPTION
+        This function outputs a label (with a specified color) immediately followed by a value.
+        It is useful for displaying configuration details or status information in a formatted way.
+
+    .PARAMETER Label
+        The label to display.
+
+    .PARAMETER Value
+        The value associated with the label.
+
+    .PARAMETER LabelColor
+        The foreground color for the label text. Defaults to "Cyan".
+
+    .PARAMETER ValueColor
+        The foreground color for the value text. Defaults to "White".
+
+    .PARAMETER NoNewline
+        A switch indicating whether to avoid adding a new line after printing the value.
+
+    .EXAMPLE
+        Write-LabeledValue "Source Path: " "C:\Images"
+    #>
     param(
         [string]$Label,
         [string]$Value,
@@ -42,7 +114,29 @@ function Write-LabeledValue {
     }
 }
 
+#-------------------------------------------
 function Write-ErrorDetail {
+    <#
+    .SYNOPSIS
+        Writes detailed error information for a specific image dimension.
+
+    .DESCRIPTION
+        This function outputs the error details including the problematic image dimension, the error
+        message, and the command that resulted in the error. It formats the output to clearly indicate
+        the source of the error.
+
+    .PARAMETER Dimension
+        The image dimension (in pixels) for which the error occurred.
+
+    .PARAMETER ErrorMessage
+        The error message text.
+
+    .PARAMETER Command
+        The command that was executed and resulted in the error.
+
+    .EXAMPLE
+        Write-ErrorDetail -Dimension 1000 -ErrorMessage "Output file not created" -Command "nconvert.exe -resize..."
+    #>
     param(
         [string]$Dimension,
         [string]$ErrorMessage,
@@ -57,11 +151,29 @@ function Write-ErrorDetail {
     Write-Host $Command
 }
 
+#-------------------------------------------
 function Write-ProcessingStart {
+    <#
+    .SYNOPSIS
+        Displays a message indicating the start of processing for a file.
+
+    .DESCRIPTION
+        This function writes a message to the console to indicate that processing has begun
+        for the specified file. It formats the file name in a distinct color.
+
+    .PARAMETER Filename
+        The name of the file that is being processed.
+
+    .EXAMPLE
+        Write-ProcessingStart "image1.jpg"
+    #>
     param([string]$Filename)
     Write-Host "Processing: " -NoNewline
     Write-Host $Filename -ForegroundColor Yellow -NoNewline
 }
+
+#-------------------------------------------
+# Main Script Logic
 
 # Start the stopwatch
 $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
@@ -181,7 +293,7 @@ foreach ($ImagePath in $ImageFilePaths) {
                         }
                         'jpeg' {
                             $Arguments += @(
-                                "-q", "95", # JPEG quality (default: 85) - higher quality setting
+                                "-q", "90", # JPEG quality (default: 85) - higher quality setting
                                 "-merge_alpha", # Merge alpha by using 'transparent color'
                                 "-transpcolor", "255", "255", "255", # red green blue: Transparency color (GIF/PNG)
                                 "-dct", "2", # DCT method (0:Slow, 1:Fast, 2:Float) - using float for better quality
